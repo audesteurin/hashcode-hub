@@ -1,5 +1,6 @@
 import { IndexedEntity } from "./core-utils";
 import type { Season, Lesson, Comment } from "@shared/types";
+import type { Env } from './core-utils';
 // --- SEASONS ---
 const SEASONS_DATA: Season[] = [
   { id: "s1", seasonNumber: 1, title: "Saison 1: Les Fondamentaux", description: "Les bases pour devenir imbattable." },
@@ -24,7 +25,7 @@ const LESSONS_DATA: Omit<Lesson, 'comments'>[] = [
   { id: "l2", seasonId: "s1", lessonNumber: 2, title: "Leçon 2 – Le développeur qui sait chercher gagne toujours", content: "Internet est rempli de réponses.\nMais combien savent poser les bonnes questions ?\nLe vrai pouvoir d’un dev ?\n👉 Chercher.\n👉 Lire.\n👉 Tester.\n👉 Recommencer.\nLeçon du jour :\nDans la tech, celui qui sait chercher devient celui qu’on vient chercher.", likes: 0 },
   { id: "l3", seasonId: "s1", lessonNumber: 3, title: "Leçon 3 – Le cloud n’est pas un outil : c’est un superpouvoir", content: "Le cloud, ce n’est pas juste AWS ou Azure.\nC’est la capacité de créer, déployer, évoluer… sans barrières.\nLeçon du jour :\nComprends le cloud et tu contrôles l’infrastructure du monde moderne.", likes: 0 },
   { id: "l4", seasonId: "s1", lessonNumber: 4, title: "Leçon 4 – La cybersécurité commence dans la tête, pas dans les outils", content: "On croit souvent que la sécurité dépend des logiciels.\nFaux.\nLa sécurité dépend d’abord de ta vigilance.\nLeçon du jour :\nLe meilleur firewall, c’est ton esprit.", likes: 0 },
-  { id: "l5", seasonId: "s1", lessonNumber: 5, title: "Leçon 5 – Le code, c’est de la poésie math��matique", content: "Quand tu écris du code propre, clair, lisible…\nTu n’écris pas juste pour la machine.\nTu écris pour l’humain qui viendra après toi.\nLeçon du jour :\nLe code élégant est un cadeau pour le futur.", likes: 0 },
+  { id: "l5", seasonId: "s1", lessonNumber: 5, title: "Leçon 5 – Le code, c’est de la poésie mathématique", content: "Quand tu écris du code propre, clair, lisible…\nTu n’écris pas juste pour la machine.\nTu écris pour l’humain qui viendra après toi.\nLeçon du jour :\nLe code élégant est un cadeau pour le futur.", likes: 0 },
   { id: "l6", seasonId: "s1", lessonNumber: 6, title: "Leçon 6 – La discipline écrase toujours le talent", content: "Tu peux ne pas être le plus intelligent.\nTu peux ne pas être le plus rapide.\nMais si tu es régulier, tu deviens dangereux.\nLeçon du jour :\nLe talent ouvre les portes.\nLa discipline les garde ouvertes.", likes: 0 },
   { id: "l7", seasonId: "s1", lessonNumber: 7, title: "Leçon 7 – Arrête d’attendre la motivation", content: "La motivation vient quand elle veut.\nLa discipline, tu la choisis.\nLeçon du jour :\nNe travaille pas quand tu te sens motivé.\nTravaille jusqu’à ce que ça devienne naturel.", likes: 0 },
   { id: "l8", seasonId: "s1", lessonNumber: 8, title: "Leçon 8 – Le futur appartient aux créateurs", content: "Il y aura toujours ceux qui consomment…\net ceux qui créent.\nToi tu es là pour créer.\nLeçon du jour :\nQuand tu construis, tu deviens inarrêtable.", likes: 0 },
@@ -94,7 +95,7 @@ export class LessonEntity extends IndexedEntity<Lesson> {
   static readonly indexName = "lessons";
   static readonly initialState: Lesson = { id: "", seasonId: "", lessonNumber: 0, title: "", content: "", likes: 0, comments: [] };
   static seedData = SEED_LESSONS;
-  static async like(env: { GlobalDurableObject: DurableObjectNamespace }, id: string): Promise<Lesson> {
+  static async like(env: Env, id: string): Promise<Lesson> {
     const lesson = new LessonEntity(env, id);
     return lesson.mutate(state => ({ ...state, likes: (state.likes || 0) + 1 }));
   }

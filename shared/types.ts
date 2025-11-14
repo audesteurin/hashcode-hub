@@ -16,6 +16,7 @@ export interface Lesson {
   title: string;
   content: string;
   likes: number;
+  comments?: Comment[];
 }
 export interface Comment {
   id: string;
