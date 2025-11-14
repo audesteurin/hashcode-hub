@@ -10,7 +10,7 @@ interface SeasonSidebarProps {
 }
 export function SeasonSidebar({ seasons, selectedSeasonId, onSelectSeason }: SeasonSidebarProps) {
   return (
-    <aside className="w-full md:w-64 lg:w-72 md:shrink-0">
+    <aside className="w-full md:w-64 lg:w-72 md:shrink-0 h-full">
       <ScrollArea className="h-full py-6 pr-6 lg:py-8">
         <div className="space-y-4">
           <div className="px-4 py-2">

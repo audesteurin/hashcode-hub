@@ -25,7 +25,7 @@ export function HomePage() {
         ]);
         setSeasons(seasonsData);
         setLessons(lessonsData);
-        if (seasonsData.length > 0 && !selectedSeasonId) {
+        if (seasonsData.length > 0) {
           setSelectedSeasonId(seasonsData[0].id);
         }
       } catch (error) {
@@ -36,7 +36,7 @@ export function HomePage() {
       }
     }
     fetchData();
-  }, [selectedSeasonId]);
+  }, []);
   const handleLike = useCallback((lessonId: string) => {
     if (likedLessons?.[lessonId]) {
       toast.info("You've already liked this lesson.");
@@ -96,7 +96,7 @@ export function HomePage() {
     <div className="py-8 md:py-10 lg:py-12">
       <HeroHeader />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 md:mt-24">
-        {isLoading && filteredLessons.length === 0 ? (
+        {isLoading ? (
           <div className="space-y-8">
             <Skeleton className="h-48 w-full" />
             <Skeleton className="h-64 w-full" />
@@ -115,17 +115,15 @@ export function HomePage() {
                 />
               ))
             ) : (
-              !isLoading && (
-                <div className="text-center py-16">
-                  <p className="text-muted-foreground">No lessons found for this season.</p>
-                </div>
-              )
+              <div className="text-center py-16">
+                <p className="text-muted-foreground">No lessons found for this season.</p>
+              </div>
             )}
           </div>
         )}
       </div>
       <footer className="text-center mt-24 text-sm text-muted-foreground">
-        <p>Built with ❤��� at Cloudflare</p>
+        <p>Built with ❤️ at Cloudflare</p>
       </footer>
     </div>
   );
