@@ -1,41 +1,96 @@
-/**
- * Minimal real-world demo: One Durable Object instance per entity (User, ChatBoard), with Indexes for listing.
- */
 import { IndexedEntity } from "./core-utils";
-import type { User, Chat, ChatMessage } from "@shared/types";
-import { MOCK_CHAT_MESSAGES, MOCK_CHATS, MOCK_USERS } from "@shared/mock-data";
-
-// USER ENTITY: one DO instance per user
-export class UserEntity extends IndexedEntity<User> {
-  static readonly entityName = "user";
-  static readonly indexName = "users";
-  static readonly initialState: User = { id: "", name: "" };
-  static seedData = MOCK_USERS;
+import type { Season, Lesson } from "@shared/types";
+// --- SEASONS ---
+const SEASONS_DATA: Season[] = [
+  { id: "s1", seasonNumber: 1, title: "Saison 1: Les Fondamentaux", description: "Les bases pour devenir imbattable." },
+  { id: "s2", seasonNumber: 2, title: "Saison 2: Niveau Avancé + Mindset", description: "Approfondir ses connaissances techniques et son état d'esprit." },
+  { id: "s3", seasonNumber: 3, title: "Saison 3: Maîtrise, Architecture, Vision", description: "Penser comme un architecte logiciel." },
+  { id: "s4", seasonNumber: 4, title: "Saison 4: Leadership Tech & Maîtrise", description: "Développer son leadership technique." },
+  { id: "s6", seasonNumber: 6, title: "Saison 6: Le Niveau Architecte", description: "Construire, Documenter, Transmettre." },
+  { id: "s7", seasonNumber: 7, title: "Saison 7: Maîtrise, Automatisation et Impact", description: "Transformer ses compétences en pouvoir concret." },
+  { id: "s8", seasonNumber: 8, title: "Saison 8: Cloud & Excellence Pro", description: "Devenir un maître du cloud." },
+  { id: "s9", seasonNumber: 9, title: "Saison 9: Cybersécurité & Vigilance", description: "Devenir un gardien numérique." },
+];
+export class SeasonEntity extends IndexedEntity<Season> {
+  static readonly entityName = "season";
+  static readonly indexName = "seasons";
+  static readonly initialState: Season = { id: "", seasonNumber: 0, title: "", description: "" };
+  static seedData = SEASONS_DATA;
 }
-
-// CHAT BOARD ENTITY: one DO instance per chat board, stores its own messages
-export type ChatBoardState = Chat & { messages: ChatMessage[] };
-
-const SEED_CHAT_BOARDS: ChatBoardState[] = MOCK_CHATS.map(c => ({
-  ...c,
-  messages: MOCK_CHAT_MESSAGES.filter(m => m.chatId === c.id),
-}));
-
-export class ChatBoardEntity extends IndexedEntity<ChatBoardState> {
-  static readonly entityName = "chat";
-  static readonly indexName = "chats";
-  static readonly initialState: ChatBoardState = { id: "", title: "", messages: [] };
-  static seedData = SEED_CHAT_BOARDS;
-
-  async listMessages(): Promise<ChatMessage[]> {
-    const { messages } = await this.getState();
-    return messages;
-  }
-
-  async sendMessage(userId: string, text: string): Promise<ChatMessage> {
-    const msg: ChatMessage = { id: crypto.randomUUID(), chatId: this.id, userId, text, ts: Date.now() };
-    await this.mutate(s => ({ ...s, messages: [...s.messages, msg] }));
-    return msg;
-  }
+// --- LESSONS ---
+const LESSONS_DATA: Lesson[] = [
+  // Season 1
+  { id: "l1", seasonId: "s1", lessonNumber: 1, title: "Leçon 1 – Pourquoi apprendre un peu chaque jour te rend imbattable", content: "Le code n’est pas difficile.\nC’est la régularité qui est difficile.\nSi tu apprends 1% par jour, au bout d’un an, tu n’es plus la même personne.\n👉 N’attends pas les grandes choses, fais de petites avancées quotidiennes.\nLeçon du jour :\nLe progrès = la somme des petites victoires.", likes: 0 },
+  { id: "l2", seasonId: "s1", lessonNumber: 2, title: "Leçon 2 – Le développeur qui sait chercher gagne toujours", content: "Internet est rempli de réponses.\nMais combien savent poser les bonnes questions ?\nLe vrai pouvoir d’un dev ?\n👉 Chercher.\n👉 Lire.\n👉 Tester.\n👉 Recommencer.\nLeçon du jour :\nDans la tech, celui qui sait chercher devient celui qu’on vient chercher.", likes: 0 },
+  { id: "l3", seasonId: "s1", lessonNumber: 3, title: "Leçon 3 – Le cloud n’est pas un outil : c’est un superpouvoir", content: "Le cloud, ce n’est pas juste AWS ou Azure.\nC’est la capacité de créer, déployer, évoluer… sans barrières.\nLeçon du jour :\nComprends le cloud et tu contrôles l’infrastructure du monde moderne.", likes: 0 },
+  { id: "l4", seasonId: "s1", lessonNumber: 4, title: "Leçon 4 – La cybersécurité commence dans la tête, pas dans les outils", content: "On croit souvent que la sécurité dépend des logiciels.\nFaux.\nLa sécurité dépend d’abord de ta vigilance.\nLeçon du jour :\nLe meilleur firewall, c’est ton esprit.", likes: 0 },
+  { id: "l5", seasonId: "s1", lessonNumber: 5, title: "Leçon 5 – Le code, c’est de la poésie math��matique", content: "Quand tu écris du code propre, clair, lisible…\nTu n’écris pas juste pour la machine.\nTu écris pour l’humain qui viendra après toi.\nLeçon du jour :\nLe code élégant est un cadeau pour le futur.", likes: 0 },
+  { id: "l6", seasonId: "s1", lessonNumber: 6, title: "Leçon 6 – La discipline écrase toujours le talent", content: "Tu peux ne pas être le plus intelligent.\nTu peux ne pas être le plus rapide.\nMais si tu es régulier, tu deviens dangereux.\nLeçon du jour :\nLe talent ouvre les portes.\nLa discipline les garde ouvertes.", likes: 0 },
+  { id: "l7", seasonId: "s1", lessonNumber: 7, title: "Leçon 7 – Arrête d’attendre la motivation", content: "La motivation vient quand elle veut.\nLa discipline, tu la choisis.\nLeçon du jour :\nNe travaille pas quand tu te sens motivé.\nTravaille jusqu’à ce que ça devienne naturel.", likes: 0 },
+  { id: "l8", seasonId: "s1", lessonNumber: 8, title: "Leçon 8 – Le futur appartient aux créateurs", content: "Il y aura toujours ceux qui consomment…\net ceux qui créent.\nToi tu es là pour créer.\nLeçon du jour :\nQuand tu construis, tu deviens inarrêtable.", likes: 0 },
+  { id: "l9", seasonId: "s1", lessonNumber: 9, title: "Leçon 9 – La compréhension vaut plus que la mémoire", content: "Apprendre par cœur, c’est fragile.\nComprendre profondément, c’est solide.\nLeçon du jour :\nCe que tu comprends, personne ne peut te l’enlever.", likes: 0 },
+  { id: "l10", seasonId: "s1", lessonNumber: 10, title: "Leçon 10 – La communauté est une force", content: "Tout seul tu vas vite.\nEnsemble, on va loin.\nApprenez à demander.\nApprenez à aider.\nApprenez à construire ensemble.\nLeçon du jour :\nUne communauté n’est forte que si chacun grandit.", likes: 0 },
+  // Season 2
+  { id: "l11", seasonId: "s2", lessonNumber: 11, title: "Leçon 11 – Le développeur qui documente devient immortel", content: "Le code vit.\nLa documentation, elle, survit.\nChaque fois que tu écris une note, un commentaire, une explication…\nTu laisses un héritage technique.\nLeçon du jour :\nDocumenter, ce n’est pas perdre du temps : c’est multiplier ton futur.", likes: 0 },
+  { id: "l12", seasonId: "s2", lessonNumber: 12, title: "Leçon 12 – Le cloud est un système d’échelles", content: "L’erreur des débutants ?\nCroire que “mettre dans le cloud” suffit.\nNon.\nLe cloud, c’est scaler intelligemment.\nC’est choisir la bonne ressource, au bon moment, au bon coût.\nLeçon du jour :\nLe cloud ne pardonne pas ceux qui paient sans comprendre.", likes: 0 },
+  { id: "l13", seasonId: "s2", lessonNumber: 13, title: "Leçon 13 – La cybersécurité : ce que tu ne vois pas te détruit", content: "Les attaques ne viennent pas toujours de l’extérieur.\nParfois, elles viennent d’un clic trop rapide, d’une confiance mal placée, d’une mauvaise habitude.\nLeçon du jour :\nLa sécurité, ce n’est pas la peur.\nC’est la lucidité.", likes: 0 },
+  { id: "l14", seasonId: "s2", lessonNumber: 14, title: "Leçon 14 – Le code propre commence avant même de coder", content: "Si ton idée est floue, ton code sera flou.\nSi tu ne comprends pas ton problème, tu ne coderas que des complications.\nLeçon du jour :\nUn bon développeur réfléchit avant d’écrire.\nUn excellent développeur réfléchit moins mais mieux.", likes: 0 },
+  { id: "l15", seasonId: "s2", lessonNumber: 15, title: "Leçon 15 – Le versioning, c’est la mémoire d’une équipe", content: "Git n’est pas un outil.\nC’est un journal de bord.\nChaque commit raconte une histoire.\nUne évolution.\nUne preuve que tu avances.\nLeçon du jour :\nUn commit clair vaut mille explications.", likes: 0 },
+  { id: "l16", seasonId: "s2", lessonNumber: 16, title: "Leçon 16 – La performance n’est pas une option", content: "Un code lent n’est pas juste un code lent.\nC’est un code qui gaspille :\n⛽ temps\n⚡ énergie\n💸 argent\n🧠 concentration\nLeçon du jour :\nOptimiser, ce n’est pas être perfectionniste.\nC’est être professionnel.", likes: 0 },
+  { id: "l17", seasonId: "s2", lessonNumber: 17, title: "Leçon 17 – Le futur est aux solutions, pas aux outils", content: "Arrêtez d’apprendre des outils pour apprendre des outils.\nApprenez à r��soudre des problèmes.\nLes outils changent.\nLes problèmes humains persistent.\nLeçon du jour :\nLes outils passent.\nL’architecte reste.", likes: 0 },
+  { id: "l18", seasonId: "s2", lessonNumber: 18, title: "Leçon 18 – L’IA n’est pas ton rival : c’est ton exosquelette", content: "L’Intelligence Artificielle ne remplace pas les développeurs.\nElle remplace les développeurs qui ne s’améliorent pas.\nLeçon du jour :\nL’IA amplifie celui qui l’utilise intelligemment.\nElle expose celui qui l’utilise paresseusement.", likes: 0 },
+  { id: "l19", seasonId: "s2", lessonNumber: 19, title: "Leçon 19 – L’environnement de travail façonne l’esprit", content: "Ton bureau, c’est ton temple.\nTon ordinateur, ton instrument.\nTon état d’esprit, ton moteur.\nLeçon du jour :\nRange ton espace, tu rangeras ton code.", likes: 0 },
+  { id: "l20", seasonId: "s2", lessonNumber: 20, title: "Leçon 20 – Le mentorat accélère le destin", content: "Tu peux avancer seul.\nMais tu vas mettre trois fois plus de temps.\nPose des questions.\nObserve les anciens.\nAide ceux qui arrivent.\nLeçon du jour :\nDans la tech, le mentorat fait gagner des années.", likes: 0 },
+  // Season 3
+  { id: "l21", seasonId: "s3", lessonNumber: 21, title: "Leçon 21 – Comprendre avant de coder, c’est déjà coder", content: "La plupart des bugs naissent avant même d’écrire la première ligne.\nQuand l’idée est confuse, le code devient chaotique.\nLeçon du jour :\nUne heure de réflexion épargne dix heures de correction.", likes: 0 },
+  { id: "l22", seasonId: "s3", lessonNumber: 22, title: "Leçon 22 – La vraie force d’un dev : simplifier l’inutile", content: "Ce n’est pas difficile de faire compliqué.\nTout le monde peut le faire.\nLe vrai génie ?\n👉 Rendre simple ce qui semblait impossible.\nLeçon du jour :\nUn bon développeur ajoute.\nUn excellent développeur retire.", likes: 0 },
+  { id: "l23", seasonId: "s3", lessonNumber: 23, title: "Leçon 23 – L’architecture est un langage, pas un schéma", content: "Une architecture n’est pas un dessin dans un PDF.\nC’est une manière de penser, de structurer, de prévoir.\nLeçon du jour :\nL’architecture, c’est écrire le futur avant de coder le présent.", likes: 0 },
+  { id: "l24", seasonId: "s3", lessonNumber: 24, title: "Leçon 24 – DevOps : l’art de ne plus casser la prod", content: "Déployer vite, c’est bien.\nDéployer sans casse, c’est mieux.\nCI/CD n’est pas une mode.\nC’est une assurance-vie.\nLeçon du jour :\nAutomatise ce que tu veux réussir souvent.", likes: 0 },
+  { id: "l25", seasonId: "s3", lessonNumber: 25, title: "Leçon 25 – La sécurité, c’est un état d’esprit parano… mais élégant", content: "La sécurité parfaite n’existe pas.\nMais la vigilance permanente, oui.\nUn bon développeur se protège.\nUn excellent développeur protège les autres.\nLeçon du jour :\nLa cybersécurité, c’est prévoir le mal avant qu’il n’arrive.", likes: 0 },
+  { id: "l26", seasonId: "s3", lessonNumber: 26, title: "Leçon 26 – Le cloud ne remplace pas l’ignorance", content: "Beaucoup pensent que “mettre dans le cloud” résout les soucis.\nFaux.\nLe cloud amplifie ce que tu sais faire.\nMais il amplifie aussi tes erreurs.\nLeçon du jour :\nLe cloud ne rend pas intelligent.\nIl rend visible ce que tu ma��trises… ou pas.", likes: 0 },
+  { id: "l27", seasonId: "s3", lessonNumber: 27, title: "Leçon 27 – La qualité est un style de vie", content: "Coder rapidement ne suffit pas.\nCoder proprement, c’est un acte de respect envers ton futur toi.\nLeçon du jour :\nLa qualité n’est pas une option.\nC’est une signature.", likes: 0 },
+  { id: "l28", seasonId: "s3", lessonNumber: 28, title: "Leçon 28 – Celui qui partage grandit plus vite que celui qui cache", content: "Tu veux progresser ?\nExplique aux autres ce que tu apprends.\nEnseigner, c’est dupliquer ton cerveau.\nPartager, c’est accélérer ton niveau.\nLeçon du jour :\nLe savoir augmente quand on le donne.", likes: 0 },
+  { id: "l29", seasonId: "s3", lessonNumber: 29, title: "Leçon 29 – Le développement, c’est un sport mental", content: "Tu veux être meilleur ?\nAlors entraîne ton esprit comme un athlète entraîne son corps :\n➡️ régularité\n➡️ rigueur\n➡️ répétition\nLeçon du jour :\nLe code est un sport.\nPratique-le comme un champion.", likes: 0 },
+  { id: "l30", seasonId: "s3", lessonNumber: 30, title: "Leçon 30 – La vision précède toujours la compétence", content: "Tu n’as pas besoin de tout maîtriser pour commencer.\nTu as juste besoin d’une direction claire.\nLa vision crée le chemin.\nLe chemin crée la compétence.\nLa compétence crée le destin.\nLeçon du jour :\nLa vision est ta première compétence.", likes: 0 },
+  // Season 4
+  { id: "l31", seasonId: "s4", lessonNumber: 31, title: "Leçon 31 – Le vrai senior n’est pas celui qui sait, mais celui qui anticipe", content: "Un junior réagit.\nUn intermédiaire corrige.\nUn senior prévoit.\nLeçon du jour :\nLe niveau se mesure à ta capacité d’éviter les problèmes, pas de les réparer.", likes: 0 },
+  { id: "l32", seasonId: "s4", lessonNumber: 32, title: "Leçon 32 – Le code rapide vient d’un esprit lent", content: "Les meilleurs dev ne courent pas.\nIls comprennent profondément… puis vont droit au but.\nLeçon du jour :\nRéfléchis lentement.\nCode rapidement.", likes: 0 },
+  { id: "l33", seasonId: "s4", lessonNumber: 33, title: "Leçon 33 – L’architecture, c’est écrire des limites", content: "Une bonne architecture n’ajoute pas des choses.\nElle élimine ce qui n’a pas besoin d’exister.\nLeçon du jour :\nArchitecturer, c’est dire “non” plus souvent que “oui”.", likes: 0 },
+  { id: "l34", seasonId: "s4", lessonNumber: 34, title: "Leçon 34 – Le problème est rarement technique", content: "80% des bugs ne sont pas liés au code.\nIls sont liés à :\n➡️ une mauvaise communication\n➡️ un besoin mal compris\n➡️ une hypothèse non vérifiée\nLeçon du jour :\nSi tu veux coder mieux, écoute mieux.", likes: 0 },
+  { id: "l35", seasonId: "s4", lessonNumber: 35, title: "Leçon 35 – La cybersécurité est une discipline de moines", content: "La sécurité n’est pas un réflexe.\nC’est une pratique quotidienne, patiente, presque spirituelle.\nLeçon du jour :\nSécuriser, c’est combattre la négligence qui dort en chacun de nous.", likes: 0 },
+  { id: "l36", seasonId: "s4", lessonNumber: 36, title: "Leçon 36 – Le cloud, c’est de la stratégie, pas de la magie", content: "Tout le monde sait déployer.\nTrès peu savent optimiser.\nEncore moins savent réduire les coûts.\nPresque personne ne sait anticiper la scale.\nLeçon du jour :\nLe cloud récompense les stratèges.\nIl punit les improvisateurs.", likes: 0 },
+  { id: "l37", seasonId: "s4", lessonNumber: 37, title: "Leçon 37 – Le code est un miroir", content: "Un code qui dérive signifie souvent un esprit dispersé.\nUn code propre reflète un esprit calme, posé, concentré.\nLeçon du jour :\nAméliore ton état intérieur, ton code suivra.", likes: 0 },
+  { id: "l38", seasonId: "s4", lessonNumber: 38, title: "Leçon 38 – Le feedback est une arme pour ceux qui aiment progresser", content: "N’aie pas peur des critiques.\nElles sont des accélérateurs, pas des attaques.\nLeçon du jour :\nCelui qui refuse le feedback reste à son niveau.\nCelui qui l’accepte monte de niveau.", likes: 0 },
+  { id: "l39", seasonId: "s4", lessonNumber: 39, title: "Leçon 39 – Le développeur moderne apprend toute sa vie", content: "La technologie change plus vite que les diplômes.\nTa valeur dépend de ta capacité à te mettre à jour.\nLeçon du jour :\nSi tu arrêtes d’apprendre un mois, tu prends un an de retard.", likes: 0 },
+  { id: "l40", seasonId: "s4", lessonNumber: 40, title: "Leçon 40 – La vision se construit à plusieurs", content: "Tu veux bâtir quelque chose de grand ?\nEntoure-toi bien.\nTravaille avec les gens qui voient loin, pas avec ceux qui voient court.\nLeçon du jour :\nUne communauté qui partage une vision devient une force inarrêtable.", likes: 0 },
+  // Season 6
+  { id: "l41", seasonId: "s6", lessonNumber: 41, title: "Épisode 1 — Créer sa première architecture simple", content: "Chaque membre va :\nChoisir un mini-projet en web, cloud, cyber, mobile ou IA\nMapper une architecture simple :\nFrontend\nBackend\nBase de données\nAuthentification\nDéploiement\nUtiliser un schéma (diagrams.net ou Excalidraw)\nC’est la base. Sans architecture, le code n’a pas de direction.", likes: 0 },
+  { id: "l42", seasonId: "s6", lessonNumber: 42, title: "Épisode 2 — L’art de la documentation intelligente", content: "On passe à :\nREADME propre\nGuide d’installation\nGuide développeur\nGuide utilisateur\nFAQ\nNotes de version\nPourquoi ?\nParce que ce qui est bien documenté est éternel.", likes: 0 },
+  { id: "l43", seasonId: "s6", lessonNumber: 43, title: "Épisode 3 — Créer un mini-Framework", content: "Oui, c’est maintenant qu’on devient fou :\nChaque membre doit créer un micro-framework ou micro-bibliothèque :\nExemples :\nUn mini framework d’auth en Python\nUne librairie JS pour appeler une API plus facilement\nUn module Node pour nettoyer les données\nUn script bash pour automatiser un déploiement\nUn plugin WordPress simple\nUne fonction Lambda réutilisable\nÇa peut être petit…\nmais ça doit être réutilisable.", likes: 0 },
+  { id: "l44", seasonId: "s6", lessonNumber: 44, title: "Épisode 4 — Industrialisation et bonnes pratiques", content: "On introduit :\nCI/CD simple (GitHub Actions)\nTests unitaires\nVersioning (semver)\nBranching propre\nSecrets management (Vault, AWS SM, Doppler…)\nC’est ici que les membres deviennent professionnels.", likes: 0 },
+  { id: "l45", seasonId: "s6", lessonNumber: 45, title: "Épisode 5 — Le Rituel du Mentor", content: "Chaque membre qui a compris un concept doit :\nl’enseigner\nen faire une vidéo courte\nou un guide\nou un schéma illustré\nCar tu n’as pas compris tant que tu n’as pas enseigné.\nCette saison transforme les bons développeurs en leaders techniques.", likes: 0 },
+  // Season 7
+  { id: "l46", seasonId: "s7", lessonNumber: 46, title: "Épisode 1 — Automatisation minimale, impact maximal", content: "HashCode, finis les tâches répétitives.\nScripts pour déploiement automatique\nJobs cron pour nettoyage de données\nPipelines CI/CD automatisés\nAlerts cloud pour incidents critiques\nLeçon : celui qui automatise gagne du temps et peut créer plus, plus vite.", likes: 0 },
+  { id: "l47", seasonId: "s7", lessonNumber: 47, title: "Épisode 2 — Contribuer à l’Open Source", content: "HashCode, chaque membre doit :\nIdentifier un projet open-source à améliorer\nSoumettre son premier Pull Request\nDocumenter ses contributions\nLeçon : contribuer = apprendre plus vite, être reconnu, créer un réseau solide.", likes: 0 },
+  { id: "l48", seasonId: "s7", lessonNumber: 48, title: "Épisode 3 — Scripts intelligents pour la vie réelle", content: "Pas seulement du code abstrait :\nBot Telegram pour notifications\nDashboard personnel pour suivre tes projets\nScripts Python pour traiter des données réelles\nLeçon : ce que tu crées doit avoir un impact immédiat.", likes: 0 },
+  { id: "l49", seasonId: "s7", lessonNumber: 49, title: "Épisode 4 — Monitoring et alerting", content: "HashCode, chaque projet sérieux doit être observé :\nLogs centralisés (ELK, CloudWatch…)\nAlertes pro sur Slack/Telegram\nDashboards simples mais clairs\nLeçon : “si tu ne mesures pas, tu ne contrôles pas”.", likes: 0 },
+  { id: "l50", seasonId: "s7", lessonNumber: 50, title: "Épisode 5 — Mentorat avancé", content: "Chaque membre prend un débutant sous son aile\nChaque mentor crée un mini-guide ou une vidéo pour l’aider\nLeçon : transmettre accélère l’expertise de celui qui enseigne et de celui qui apprend.", likes: 0 },
+  // Season 8
+  { id: "l51", seasonId: "s8", lessonNumber: 51, title: "Épisode 1 — Architecturer pour le cloud", content: "HashCode, si tu mets juste un projet sur le cloud, tu risques des coûts inutiles et des problèmes.\nComprendre les différents types de services (IaaS, PaaS, SaaS)\nPlanifier l’architecture pour scalabilité et résilience\nChoisir la bonne zone et la bonne instance\nLeçon : une bonne architecture cloud préserve ton énergie et ton argent.", likes: 0 },
+  { id: "l52", seasonId: "s8", lessonNumber: 52, title: "Épisode 2 — Automatiser tout ce qui peut l’être", content: "Déploiement via scripts (Terraform, CloudFormation)\nAutomatisation des sauvegardes\nAuto-scaling pour gérer la charge\nLeçon : si tu répètes une action plus d’une fois, script it !", likes: 0 },
+  { id: "l53", seasonId: "s8", lessonNumber: 53, title: "Épisode 3 — Sécurité cloud de base à avancée", content: "IAM et permissions minimales\nChiffrement des données en repos et en transit\nMonitoring des logs et alertes\nLeçon : le cloud n’est pas magique, il récompense les prudents et les rigoureux.", likes: 0 },
+  { id: "l54", seasonId: "s8", lessonNumber: 54, title: "Épisode 4 — Optimiser les coûts", content: "Identifier les services inutilisés\nRedimensionner les instances\nUtiliser les instances spot et réservées\nLeçon : le cloud est puissant, mais l’ignorance coûte cher.", likes: 0 },
+  { id: "l55", seasonId: "s8", lessonNumber: 55, title: "Épisode 5 — Les bonnes pratiques DevOps en cloud", content: "CI/CD pour le cloud\nTests automatisés avant déploiement\nMonitoring post-déploiement\nLeçon : livrer vite sans casser, c’est livrer intelligemment.", likes: 0 },
+  // Season 9
+  { id: "l56", seasonId: "s9", lessonNumber: 56, title: "Épisode 1 — La sécurité commence par la vigilance", content: "HashCode, la sécurité n’est pas qu’une question de firewall ou antivirus.\nMauvaises habitudes = brèches\nMauvaises permissions = catastrophes\nClics imprudents = failles\nLeçon : être conscient des risques, c’est déjà bloquer 50% des attaques.", likes: 0 },
+  { id: "l57", seasonId: "s9", lessonNumber: 57, title: "Épisode 2 — Les bases qui sauvent", content: "Authentification forte (MFA, passwordless)\nGestion des secrets (Vault, environnements sécurisés)\nPermissions minimales (principe du moindre privilège)\nLeçon : le minimum bien fait vaut mieux que tout le reste mal fait.", likes: 0 },
+  { id: "l58", seasonId: "s9", lessonNumber: 58, title: "Épisode 3 — Surveiller et détecter", content: "Logs centralisés pour vos systèmes\nAlertes automatisées sur comportements suspects\nTableaux de bord simples mais efficaces\nLeçon : “Si tu ne mesures pas, tu ne contrôles pas”.", likes: 0 },
+  { id: "l59", seasonId: "s9", lessonNumber: 59, title: "Épisode 4 — Les attaques et comment les anticiper", content: "Injection SQL, XSS, CSRF\nPhishing et social engineering\nExploits connus et patching rapide\nLeçon : connaître l’attaque avant qu’elle n’arrive, c’est déjà la moitié de la d��fense.", likes: 0 },
+  { id: "l60", seasonId: "s9", lessonNumber: 60, title: "Épisode 5 — La sécurité devient une discipline", content: "Habitudes quotidiennes\nTests réguliers de vulnérabilité\nMise à jour et maintenance proactive\nLeçon : la sécurité n’est pas ponctuelle, c’est un mode de vie numérique.", likes: 0 },
+];
+export class LessonEntity extends IndexedEntity<Lesson> {
+  static readonly entityName = "lesson";
+  static readonly indexName = "lessons";
+  static readonly initialState: Lesson = { id: "", seasonId: "", lessonNumber: 0, title: "", content: "", likes: 0 };
+  static seedData = LESSONS_DATA;
 }
-
