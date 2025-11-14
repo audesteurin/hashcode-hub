@@ -2,7 +2,7 @@
 
 An elegant, minimalist platform for the HashCode developer community to read, discuss, and share motivational tech lessons.
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/audesteurin/hashcode-hub)
 
 ## About The Project
 
@@ -101,4 +101,4 @@ This project is designed for seamless deployment to Cloudflare.
 
 Alternatively, you can deploy directly from your GitHub repository with a single click.
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/audesteurin/hashcode-hub)
